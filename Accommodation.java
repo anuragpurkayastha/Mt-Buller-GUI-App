@@ -59,6 +59,6 @@ public class Accommodation implements Serializable{
 
 	@Override
 	public String toString(){
-		return "ID:\t\t" + accommodationID + "\nPrice:\t\t$" + price + "\nType:\t\t" + type + "\nAvailable:\t" + isAvailable;
+		return "ID: " + accommodationID + ", Price: $" + price + ", Type: " + type + ", Available: " + isAvailable;
 	}
 }
