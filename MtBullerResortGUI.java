@@ -22,7 +22,8 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
 
     //-- Panels
     JPanel accommodationTab;
-    JTextArea accommDisplayPanel;
+    JTextArea accommDisplayArea;
+    JPanel accommDisplayPanel;
     JPanel accommBtnPanel;
 
     //-- Buttons
@@ -51,6 +52,12 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     JLabel skiLevelLbl;
     JTextField skiLevelField;
 
+    /*
+     *  Declare components for Travel Packages Tab - TODO
+     */
+    
+    //-- Panels
+    JPanel travelPackageTab;
     
     /*  CONSTRUCTOR     */
     public MtBullerResortGUI(){
@@ -59,8 +66,12 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         tabs = new JTabbedPane();
  
         // Initialize the panels for each tab
-        accommodationTab = new JPanel();
-        customerTab = new JPanel();
+        accommodationTab = new JPanel();        // Accommodation tab
+        accommodationTab.setLayout(new BorderLayout());
+        customerTab = new JPanel();     // Customer tab
+        customerTab.setLayout(new BorderLayout());
+        travelPackageTab = new JPanel();        // Travel Package Tab
+        travelPackageTab.setLayout(new BorderLayout());
 
         /*
          *      BUILD THE PANELS
@@ -69,24 +80,33 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         /*-- Accommodation     */
 
         // Display Panel
-        accommDisplayPanel = new JTextArea(30,60);
+        accommDisplayPanel = new JPanel();
+        accommDisplayArea = new JTextArea(50,50); // (rows,columns)
+        accommDisplayPanel.add(accommDisplayArea);
         accommodationTab.add(accommDisplayPanel,BorderLayout.CENTER);
         
         // Button Panel
         accommBtnPanel = new JPanel();
-        displayAllAccommBtn = new JButton("Display all accommodation");
-        clearBtnAccomm = new JButton("Clear Display");
-        displayAvailableAccommBtn = new JButton("Display available accommodation");
+
+        displayAllAccommBtn = new JButton("Display all accommodation"); // Display all accommodations
+        displayAllAccommBtn.addActionListener(this);
+
+        clearBtnAccomm = new JButton("Clear Display");  // Clear display
+        clearBtnAccomm.addActionListener(this);
+
+        displayAvailableAccommBtn = new JButton("Display available accommodation"); // Display available accommodation
+        displayAvailableAccommBtn.addActionListener(this);
 
         accommBtnPanel.add(displayAllAccommBtn);
-        accommBtnPanel.add(clearBtnAccomm);
         accommBtnPanel.add(displayAvailableAccommBtn);
+        accommBtnPanel.add(clearBtnAccomm);
 
-        accommodationTab.add(accommBtnPanel,BorderLayout.SOUTH);
-        
+        accommodationTab.add(accommBtnPanel, BorderLayout.SOUTH);
+
         // Add tabs to the window
         tabs.add("Accommodation", accommodationTab);
         tabs.add("Customers", customerTab);
+        tabs.add("Travel Packages", travelPackageTab);
 
         add(tabs, BorderLayout.CENTER);
     }// End constructor
@@ -103,4 +123,5 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         app.setLocationRelativeTo(null);
         app.setVisible(true);
     }// End main
+
 }// End class
