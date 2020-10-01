@@ -65,7 +65,7 @@ public class TravelPackage implements Serializable{
 		int costPerLesson = 0;
 
 		//	Set the cost per lesson according to the customer's skill level.
-		switch(pkg.getCustomer().getSkiLevel()){
+		switch(this.getCustomer().getSkiLevel()){
 			case 1:
 				/*	Beginner 	*/
 				costPerLesson = 25;
