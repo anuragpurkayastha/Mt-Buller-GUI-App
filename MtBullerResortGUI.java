@@ -63,11 +63,26 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         customerTab = new JPanel();
 
         /*
-         *      BUILD THE TABS
+         *      BUILD THE PANELS
          */
 
-        /*-- Accommodations     */
+        /*-- Accommodation     */
+
+        // Display Panel
+        accommDisplayPanel = new JTextArea(30,60);
+        accommodationTab.add(accommDisplayPanel,BorderLayout.CENTER);
         
+        // Button Panel
+        accommBtnPanel = new JPanel();
+        displayAllAccommBtn = new JButton("Display all accommodation");
+        clearBtnAccomm = new JButton("Clear Display");
+        displayAvailableAccommBtn = new JButton("Display available accommodation");
+
+        accommBtnPanel.add(displayAllAccommBtn);
+        accommBtnPanel.add(clearBtnAccomm);
+        accommBtnPanel.add(displayAvailableAccommBtn);
+
+        accommodationTab.add(accommBtnPanel,BorderLayout.SOUTH);
         
         // Add tabs to the window
         tabs.add("Accommodation", accommodationTab);
@@ -84,7 +99,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     /*          MAIN            */
     public static void main(String[] args){
         MtBullerResortGUI app = new MtBullerResortGUI();
-        app.setSize(500,500);
+        app.setSize(600,500);
         app.setLocationRelativeTo(null);
         app.setVisible(true);
     }// End main
