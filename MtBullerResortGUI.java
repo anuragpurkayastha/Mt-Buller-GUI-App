@@ -47,6 +47,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     //-- Panels
     JPanel customerTab;
     JPanel addCustomerPanel;
+    JPanel customerInputPanel;
     JPanel skiLevelSelectPanel;
     JPanel displayCustomersPanel;
     JPanel customerBtnPanel;
@@ -134,8 +135,11 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         addCustomerBtn = new JButton("Add Customer");
 
         // Add customer panel
+        customerInputPanel = new JPanel();
+        customerInputPanel.setLayout(new GridLayout(2,2));
+
         addCustomerPanel = new JPanel();
-        addCustomerPanel.setLayout(new GridLayout(0,2,10,10));        // (rows, columns)
+        addCustomerPanel.setLayout(new GridLayout(1,3,10,10));        // (rows, columns)
         skiLevelSelectPanel = new JPanel();
 
         skiLevelLbl = new JLabel("Ski Level");
@@ -153,10 +157,10 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         skiLevelSelectPanel.add(intermediateRadioBtn);
         skiLevelSelectPanel.add(expertRadioBtn);
 
-        addCustomerPanel.add(custNameLbl);
-        addCustomerPanel.add(custNameField);
-        addCustomerPanel.add(skiLevelLbl);
-        addCustomerPanel.add(skiLevelSelectPanel);
+        customerInputPanel.add(custNameLbl);
+        customerInputPanel.add(custNameField);
+        customerInputPanel.add(skiLevelLbl);
+        customerInputPanel.add(skiLevelSelectPanel);
         addCustomerPanel.add(addCustomerBtn);
 
         customerTab.add(addCustomerPanel, BorderLayout.NORTH);
