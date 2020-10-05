@@ -70,11 +70,32 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     JRadioButton expertRadioBtn;        // Expert radio button
 
     /*
-     *  Declare components for Travel Packages Tab - TODO
+     *  Declare components for Travel Packages Tab
      */
-    
+
     //-- Panels
     JPanel travelPackageTab;
+    JPanel addTravelPackagePanel;
+    JPanel displayTravelPackagePanel;
+    JPanel travelPackageBtnPanel;
+
+    //-- Buttons
+    JButton addTravelPackageBtn;
+    JButton addLiftPassBtn;
+    JButton addLessonBtn;
+    JButton listPackagesBtn;
+    JButton savePackagesBtn;
+    JButton readPackagesBtn;
+
+    //-- Input Fields
+    JLabel customerSelectLabel;
+    JComboBox<String>   selectCustomerCombo;
+    JLabel accommodationSelectLabel;
+    JComboBox<String> selectAccommodationCombo;
+    JLabel addLiftPassLabel;
+    JTextField addLiftPassField;
+    JLabel addLessonLabel;
+    JTextField addLessonField;
     
     /*  CONSTRUCTOR     */
     public MtBullerResortGUI(){
@@ -100,7 +121,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
          *      BUILD THE PANELS
          */
 
-        /*-- Accommodation     */
+        /*======================================= Accommodation ========================================================*/
 
         // Display Panel
         accommDisplayPanel = new JPanel();
@@ -129,8 +150,8 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         accommBtnPanel.add(clearBtnAccomm);
 
         accommodationTab.add(accommBtnPanel, BorderLayout.SOUTH);
-
-        /*-- Customers          */
+        /*====================================== END ACCOMMODATION =================================================================*/
+        /*=============================================== CUSTOMERS ====================================================================== */
         customerTab = new JPanel();
         customerTab.setLayout(new BorderLayout());
 
@@ -197,7 +218,46 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         customerBtnPanel.add(clearBtnCustomer);
 
         customerTab.add(customerBtnPanel, BorderLayout.SOUTH);        
+        /*=============================================== END CUSTOMERS ====================================================================== */
+
+        /*=============================================== TRAVEL PACKAGES ================================================================== */
+
+        travelPackageTab = new JPanel();
+        travelPackageTab.setLayout(new BorderLayout());
+
+        // Add Travel Package panel
+        addTravelPackagePanel = new JPanel();
+        addTravelPackagePanel.setLayout(new GridLayout(1,5, 10, 10));   // (rows,columns)
+        addTravelPackageBtn = new JButton("Add Package");
+
+        // Inputs for customer and accommodation
+        customerSelectLabel = new JLabel("Customer ID");
+        selectCustomerCombo = new JComboBox<>();
+        selectCustomerCombo.addActionListener(this);
+       
         
+        accommodationSelectLabel = new JLabel("Accommodation ID");
+        selectAccommodationCombo = new JComboBox<>();
+        selectAccommodationCombo.addActionListener(this);
+
+        // Populate customer and accommodation dropdowns
+        for (int i = 0; i < customers.size(); i++){
+            selectCustomerCombo.addItem(Integer.toString(customers.get(i).getID()));
+        }
+
+        for (int i = 0; i < accommodations.size(); i++){
+            selectAccommodationCombo.addItem(Integer.toString(accommodations.get(i).getID()));
+        }
+
+
+        addTravelPackagePanel.add(customerSelectLabel);
+        addTravelPackagePanel.add(selectCustomerCombo);
+        addTravelPackagePanel.add(accommodationSelectLabel);
+        addTravelPackagePanel.add(selectAccommodationCombo);
+        addTravelPackagePanel.add(addTravelPackageBtn);
+
+        travelPackageTab.add(addTravelPackagePanel, BorderLayout.NORTH);
+        /*=============================================== END TRAVEL PACKAGES ====================================================================== */
         // Add tabs to the window
         tabs.add("Accommodation", accommodationTab);
         tabs.add("Customers", customerTab);
@@ -225,6 +285,9 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         }
         else if (e.getSource() == addCustomerBtn){
             this.addCustomer();
+        }
+        else if (e.getSource() == addTravelPackageBtn){
+            this.createTravelPackage();
         }
     }
 
@@ -268,7 +331,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
 
         for(Accommodation a: accommodations){
             if(a.getIsAvailable()){
-                accommDisplayArea.append(a.toString() + "\n");
+                accommDisplayArea.append(a.toString() + "\n\n");
             }
         }
     }
@@ -303,6 +366,16 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
             }
         }
         custNameField.setText("");
+    }
+
+    public void createTravelPackage(){
+    /*  Creates a travel package        */
+
+        // Get the customer ID
+
+        // Get the accommodation ID
+
+        // Create a new travel package.
     }
  
     /*          MAIN            */
