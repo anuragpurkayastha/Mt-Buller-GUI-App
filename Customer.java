@@ -57,6 +57,6 @@ public class Customer implements Serializable{
 			default:
 				skiLevelString = "Unspecified";
 		}
-		return "Customer ID:\t" + custID + "\nName:\t\t" + name + "\nSki Level:\t" + skiLevelString;
+		return "Customer ID:\t" + custID + "\nName:\t" + name + "\nSki Level:\t" + skiLevelString;
 	}
 }

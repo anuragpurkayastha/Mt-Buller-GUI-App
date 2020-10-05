@@ -47,6 +47,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     //-- Panels
     JPanel customerTab;
     JPanel addCustomerPanel;
+    JPanel addCustomerBtnPanel;
     JPanel customerInputPanel;
     JPanel skiLevelSelectPanel;
     JPanel displayCustomersPanel;
@@ -78,6 +79,9 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     /*  CONSTRUCTOR     */
     public MtBullerResortGUI(){
         
+        // Create the frame
+        super("Mt Buller Resort");
+      
         /*      Populate lists  */
         this.populateLists();
 
@@ -100,11 +104,12 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
 
         // Display Panel
         accommDisplayPanel = new JPanel();
-        accommDisplayArea = new JTextArea(50,50); // (rows,columns)
+        accommDisplayArea = new JTextArea(31,50); // (rows,columns)
+        accommDisplayArea.setEditable ( false );
         accommDisplayPanel.add(accommDisplayArea);
         accommodationTab.add(accommDisplayPanel,BorderLayout.CENTER);
-        scrollAccomm = new JScrollPane(accommDisplayArea);
-        accommDisplayArea.setBorder(new TitledBorder("List of Accommodations"));
+        scrollAccomm = new JScrollPane(accommDisplayArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        accommDisplayPanel.setBorder(new TitledBorder("List of Accommodations"));
         accommDisplayPanel.add(scrollAccomm);
 
         // Button Panel
@@ -133,22 +138,24 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         custNameField = new JTextField(20);
 
         addCustomerBtn = new JButton("Add Customer");
+        addCustomerBtn.addActionListener(this);
 
         // Add customer panel
-        customerInputPanel = new JPanel();
-        customerInputPanel.setLayout(new GridLayout(2,2));
-
         addCustomerPanel = new JPanel();
-        addCustomerPanel.setLayout(new GridLayout(1,3,10,10));        // (rows, columns)
+        addCustomerPanel.setLayout(new GridLayout(3,2,10,10));        // (rows, columns)
         skiLevelSelectPanel = new JPanel();
 
         skiLevelLbl = new JLabel("Ski Level");
 
         skiLevelSelection = new ButtonGroup();  // Ski Level Selection
 
-        beginnerRadioBtn = new JRadioButton("Beginner");
-        intermediateRadioBtn = new JRadioButton("Intermediate");
-        expertRadioBtn = new JRadioButton("Expert");
+        beginnerRadioBtn = new JRadioButton("Beginner");        // Beginner
+        beginnerRadioBtn.addActionListener(this);
+        intermediateRadioBtn = new JRadioButton("Intermediate");        // Intermediate
+        intermediateRadioBtn.addActionListener(this);
+        expertRadioBtn = new JRadioButton("Expert");    // Expert
+        expertRadioBtn.addActionListener(this);
+
         skiLevelSelection.add(beginnerRadioBtn);
         skiLevelSelection.add(intermediateRadioBtn);
         skiLevelSelection.add(expertRadioBtn);
@@ -157,24 +164,39 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         skiLevelSelectPanel.add(intermediateRadioBtn);
         skiLevelSelectPanel.add(expertRadioBtn);
 
-        customerInputPanel.add(custNameLbl);
-        customerInputPanel.add(custNameField);
-        customerInputPanel.add(skiLevelLbl);
-        customerInputPanel.add(skiLevelSelectPanel);
+        addCustomerPanel.add(custNameLbl);
+        addCustomerPanel.add(custNameField);
+        addCustomerPanel.add(skiLevelLbl);
+        addCustomerPanel.add(skiLevelSelectPanel);
+
         addCustomerPanel.add(addCustomerBtn);
 
         customerTab.add(addCustomerPanel, BorderLayout.NORTH);
 
         // Display customers panel
         displayCustomersPanel = new JPanel();
-        custDisplayArea = new JTextArea(50, 50);        // (rows, columns)
-        displayCustomersPanel.add(custDisplayArea);
+        custDisplayArea = new JTextArea(24, 50);        // (rows, columns)
+        custDisplayArea.setEditable ( false );
+        displayCustomersPanel.setBorder(new TitledBorder("List of Customers"));
+        JScrollPane custDisplayScroll = new JScrollPane(custDisplayArea,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        displayCustomersPanel.add(custDisplayScroll);
+//        displayCustomersPanel.add(custDisplayArea);
         
         customerTab.add(displayCustomersPanel, BorderLayout.CENTER);
 
         // Buttons Panel
-        
-        
+        customerBtnPanel = new JPanel();
+        customerBtnPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        displayCustomersBtn = new JButton("Display Customers");
+        displayCustomersBtn.addActionListener(this);
+        clearBtnCustomer = new JButton("Clear Display");
+        clearBtnCustomer.addActionListener(this);
+        customerBtnPanel.add(displayCustomersBtn);
+        customerBtnPanel.add(clearBtnCustomer);
+
+        customerTab.add(customerBtnPanel, BorderLayout.SOUTH);        
         
         // Add tabs to the window
         tabs.add("Accommodation", accommodationTab);
@@ -195,7 +217,15 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         else if (e.getSource() == displayAvailableAccommBtn){
             this.listAvailableAccommodations();
         }
-            
+        else if (e.getSource() == displayCustomersBtn){
+            this.listCustomers();
+        }
+        else if (e.getSource() == clearBtnCustomer){
+            custDisplayArea.setText("");
+        }
+        else if (e.getSource() == addCustomerBtn){
+            this.addCustomer();
+        }
     }
 
     public void populateLists(){
@@ -226,7 +256,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         accommDisplayArea.setText("");
         
         for(Accommodation a: accommodations){
-            accommDisplayArea.append(a.toString() + "\n");
+            accommDisplayArea.append(a.toString() + "\n\n");
         }
     }
 
@@ -242,11 +272,43 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
             }
         }
     }
+
+    public void listCustomers(){
+    /*
+        List all customers
+    */
+        custDisplayArea.setText("");
+
+        for(Customer c: customers){
+            custDisplayArea.append(c.toString() + "\n\n");
+        }
+    }
+
+    public void addCustomer(){
+    /*  Add customer    */
+        
+        // Get the customer name
+        String customerName = custNameField.getText();
+        if (!customerName.equals("")){
+
+            // Get the ski level
+            if (beginnerRadioBtn.isSelected()){
+                customers.add(new Customer(customerName,1));
+            }
+            else if (intermediateRadioBtn.isSelected()){
+                customers.add(new Customer(customerName, 2));
+            }
+            else if (expertRadioBtn.isSelected()){
+                customers.add(new Customer(customerName, 3));
+            }
+        }
+        custNameField.setText("");
+    }
  
     /*          MAIN            */
     public static void main(String[] args){
         MtBullerResortGUI app = new MtBullerResortGUI();
-        app.setSize(600,600);// (width,height)
+        app.setSize(650,600);// (width,height)
         app.setLocationRelativeTo(null);
         app.setVisible(true);
     }// End main
