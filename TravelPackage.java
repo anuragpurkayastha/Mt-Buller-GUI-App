@@ -34,14 +34,14 @@ public class TravelPackage implements Serializable{
 		this.accommodation = accommodation;
 	}
 
-	public TravelPackage(Customer customer, Accommodation accommodation, int lesson){
+	public TravelPackage(Customer customer, Accommodation accommodation, LocalDate startDate ){
 		this(customer, accommodation);
-		this.lesson = lesson;
+		this.startDate = startDate;
 	}
 
-	public TravelPackage(Customer customer, Accommodation accommodation, int lesson, int liftPass){
-		this(customer, accommodation, lesson);
-		this.liftPass = liftPass;
+	public TravelPackage(Customer customer, Accommodation accommodation, LocalDate startDate, int duration ){
+		this(customer, accommodation, startDate);
+		this.duration = duration;
 	}
 
 	public int getID(){

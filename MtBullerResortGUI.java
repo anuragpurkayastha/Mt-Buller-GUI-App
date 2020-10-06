@@ -11,6 +11,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.util.ArrayList;
+import java.time.LocalDate;
 
 public class MtBullerResortGUI extends JFrame implements ActionListener{
 
@@ -96,6 +97,10 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     JTextField addLiftPassField;
     JLabel addLessonLabel;
     JTextField addLessonField;
+    JLabel startDateLabel;
+    JTextField startDateField;
+    JLabel durationLabel;
+    JTextField durationField;
     
     /*  CONSTRUCTOR     */
     public MtBullerResortGUI(){
@@ -164,6 +169,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         // Add customer panel
         addCustomerPanel = new JPanel();
         addCustomerPanel.setLayout(new GridLayout(3,2,10,10));        // (rows, columns)
+        addCustomerPanel.setBorder(new TitledBorder("New Customer"));
         skiLevelSelectPanel = new JPanel();
 
         skiLevelLbl = new JLabel("Ski Level");
@@ -227,33 +233,43 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
 
         // Add Travel Package panel
         addTravelPackagePanel = new JPanel();
-        addTravelPackagePanel.setLayout(new GridLayout(1,5, 10, 10));   // (rows,columns)
+        addTravelPackagePanel.setLayout(new GridLayout(5,2,5,2));   // (rows,columns)
         addTravelPackageBtn = new JButton("Add Package");
+        addTravelPackageBtn.addActionListener(this);
 
         // Inputs for customer and accommodation
         customerSelectLabel = new JLabel("Customer ID");
         selectCustomerCombo = new JComboBox<>();
-        selectCustomerCombo.addActionListener(this);
-       
         
         accommodationSelectLabel = new JLabel("Accommodation ID");
         selectAccommodationCombo = new JComboBox<>();
-        selectAccommodationCombo.addActionListener(this);
+
+        // Inputs for Start date and duration
+        startDateLabel = new JLabel("Start Date (yyyy-mm-dd)");
+        startDateField = new JTextField(11);
+
+        durationLabel = new JLabel("Duration (days)");
+        durationField = new JTextField(3);
 
         // Populate customer and accommodation dropdowns
         for (int i = 0; i < customers.size(); i++){
             selectCustomerCombo.addItem(Integer.toString(customers.get(i).getID()));
         }
 
+
         for (int i = 0; i < accommodations.size(); i++){
             selectAccommodationCombo.addItem(Integer.toString(accommodations.get(i).getID()));
         }
 
-
+        addTravelPackagePanel.setBorder(new TitledBorder("New Travel Package"));
         addTravelPackagePanel.add(customerSelectLabel);
         addTravelPackagePanel.add(selectCustomerCombo);
         addTravelPackagePanel.add(accommodationSelectLabel);
         addTravelPackagePanel.add(selectAccommodationCombo);
+        addTravelPackagePanel.add(startDateLabel);
+        addTravelPackagePanel.add(startDateField);
+        addTravelPackagePanel.add(durationLabel);
+        addTravelPackagePanel.add(durationField);
         addTravelPackagePanel.add(addTravelPackageBtn);
 
         travelPackageTab.add(addTravelPackagePanel, BorderLayout.NORTH);
@@ -287,7 +303,9 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
             this.addCustomer();
         }
         else if (e.getSource() == addTravelPackageBtn){
-            this.createTravelPackage();
+            if(!durationField.getText().equals("") && !startDateField.getText().equals("")){
+                this.createTravelPackage();
+            }
         }
     }
 
@@ -350,32 +368,87 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     public void addCustomer(){
     /*  Add customer    */
         
+        Customer newCustomer = null;
+
         // Get the customer name
         String customerName = custNameField.getText();
         if (!customerName.equals("")){
 
             // Get the ski level
             if (beginnerRadioBtn.isSelected()){
-                customers.add(new Customer(customerName,1));
+                newCustomer = new Customer(customerName,1);
             }
             else if (intermediateRadioBtn.isSelected()){
-                customers.add(new Customer(customerName, 2));
+                newCustomer = new Customer(customerName, 2);
             }
             else if (expertRadioBtn.isSelected()){
-                customers.add(new Customer(customerName, 3));
+                newCustomer = new Customer(customerName, 3);
             }
         }
-        custNameField.setText("");
+        customers.add(newCustomer);
+        custNameField.setText("");      // Clear the customer name field
+
+        // Add the customer ID to the customer combobox
+        selectCustomerCombo.addItem(Integer.toString(newCustomer.getID()));
     }
 
     public void createTravelPackage(){
     /*  Creates a travel package        */
+        
+        // Get the customer ID and then the customer with that ID
+        int selectedCustID = Integer.parseInt((String) selectCustomerCombo.getSelectedItem());
+        Customer selectedCustomer = this.getCustomerByID(selectedCustID);
 
-        // Get the customer ID
+        // Get the accommodation ID and then the accommodation with that ID
+        int selectedAccommID = Integer.parseInt((String) selectAccommodationCombo.getSelectedItem());
+        Accommodation selectedAccomm = this.getAccommodationByID(selectedAccommID);
 
-        // Get the accommodation ID
+        // Get the start date
+        LocalDate start = LocalDate.parse(startDateField.getText());
+
+        // Get the duration
+        int days = Integer.parseInt(durationField.getText());
 
         // Create a new travel package.
+        packages.add(new TravelPackage(selectedCustomer, selectedAccomm, start, days));
+
+        // Clean up
+        selectedAccomm.setIsAvailable(false);
+        startDateField.setText("");
+        durationField.setText("");
+        this.listTravelPackages();
+
+        // Remove the selected accommodation from the combo box
+        selectAccommodationCombo.removeItemAt(selectAccommodationCombo.getSelectedIndex());
+    }
+
+    public Customer getCustomerByID(int id){
+    /*  Get a customer by ID    */
+
+        for (Customer c: customers){
+            
+            if (c.getID() == id){
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public Accommodation getAccommodationByID(int id){
+    /*  Get Accommodation by ID */
+        for (Accommodation a: accommodations){
+            if (a.getID() == id){
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public void listTravelPackages(){
+    /* List all Travel packages */
+        for (TravelPackage p: packages){
+            System.out.println(p);
+        }
     }
  
     /*          MAIN            */
