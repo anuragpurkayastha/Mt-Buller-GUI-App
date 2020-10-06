@@ -77,6 +77,10 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     //-- Panels
     JPanel travelPackageTab;
     JPanel addTravelPackagePanel;
+    JPanel addLiftPassLessonPanel;
+    JPanel addLiftPassPanel;
+    JPanel addLessonPanel;
+    JPanel selectTravelPackagePanel;
     JPanel displayTravelPackagePanel;
     JPanel travelPackageBtnPanel;
 
@@ -101,6 +105,12 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     JTextField startDateField;
     JLabel durationLabel;
     JTextField durationField;
+    JLabel selectTravelPackageLabel;
+    JComboBox<String> selectTravelPackageCombo;
+    JLabel selectNumLessonsLabel;
+    JTextField selectNumLessonsField;
+    JLabel numLiftPassDaysLbl;
+    JTextField numLiftPassDaysField;
     
     /*  CONSTRUCTOR     */
     public MtBullerResortGUI(){
@@ -231,7 +241,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         travelPackageTab = new JPanel();
         travelPackageTab.setLayout(new BorderLayout());
 
-        // Add Travel Package panel
+        /*      Add Travel Package panel     */
         addTravelPackagePanel = new JPanel();
         addTravelPackagePanel.setLayout(new GridLayout(5,2,5,2));   // (rows,columns)
         addTravelPackageBtn = new JButton("Add Package");
@@ -261,6 +271,35 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
             selectAccommodationCombo.addItem(Integer.toString(accommodations.get(i).getID()));
         }
 
+        /*      Add Lift pass Lesson Panel    */
+        addLiftPassLessonPanel = new JPanel();
+        addLiftPassLessonPanel.setBorder(new TitledBorder("Add Lessons and Lift Pass"));
+
+
+        addLiftPassPanel = new JPanel();
+        addLiftPassPanel.setLayout(new GridLayout(1,3,5,5));
+
+        addLessonBtn = new JButton("Add Lesson");
+        addLessonBtn.addActionListener(this);
+        selectNumLessonsLabel = new JLabel("Number of Lessons");
+        selectNumLessonsField = new JTextField(2);
+
+        selectTravelPackagePanel = new JPanel();
+        selectTravelPackagePanel.setLayout(new GridLayout(1,2,5,5));
+        selectTravelPackageLabel = new JLabel("Travel Package");
+
+        selectTravelPackageCombo = new JComboBox<>();
+
+        for (TravelPackage p: packages){
+            selectTravelPackageCombo.addItem(Integer.toString(p.getID()));
+        }
+
+        addLiftPassBtn = new JButton("Add Lift Pass");
+        addLiftPassBtn.addActionListener(this);
+
+        numLiftPassDaysLbl = new JLabel("Number of Days");
+        numLiftPassDaysField = new JTextField(3);
+
         addTravelPackagePanel.setBorder(new TitledBorder("New Travel Package"));
         addTravelPackagePanel.add(customerSelectLabel);
         addTravelPackagePanel.add(selectCustomerCombo);
@@ -272,7 +311,21 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         addTravelPackagePanel.add(durationField);
         addTravelPackagePanel.add(addTravelPackageBtn);
 
+        selectTravelPackagePanel.add(selectTravelPackageLabel);
+        selectTravelPackagePanel.add(selectTravelPackageCombo);
+        addLiftPassLessonPanel.add(selectTravelPackagePanel);
+
+        addLiftPassPanel.add(selectNumLessonsLabel);
+        addLiftPassPanel.add(selectNumLessonsField);
+        addLiftPassPanel.add(addLessonBtn);
+        addLiftPassLessonPanel.add(addLiftPassPanel);
+
+        addLiftPassLessonPanel.add(numLiftPassDaysLbl);
+        addLiftPassLessonPanel.add(numLiftPassDaysField);
+        addLiftPassLessonPanel.add(addLiftPassBtn);
+
         travelPackageTab.add(addTravelPackagePanel, BorderLayout.NORTH);
+        travelPackageTab.add(addLiftPassLessonPanel);
         /*=============================================== END TRAVEL PACKAGES ====================================================================== */
         // Add tabs to the window
         tabs.add("Accommodation", accommodationTab);
@@ -306,6 +359,14 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
             if(!durationField.getText().equals("") && !startDateField.getText().equals("")){
                 this.createTravelPackage();
             }
+        }
+        else if (e.getSource() == addLessonBtn){
+            if(!selectNumLessonsField.equals("")){
+                this.addLessonFees();
+            }
+        }
+        else if (e.getSource() == addLiftPassBtn){
+            System.out.println("Adding lift pass....");
         }
     }
 
@@ -404,22 +465,33 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         Accommodation selectedAccomm = this.getAccommodationByID(selectedAccommID);
 
         // Get the start date
-        LocalDate start = LocalDate.parse(startDateField.getText());
+        try{
+            LocalDate start = LocalDate.parse(startDateField.getText());
 
-        // Get the duration
-        int days = Integer.parseInt(durationField.getText());
+            // Get the duration
+            int days = Integer.parseInt(durationField.getText());
 
-        // Create a new travel package.
-        packages.add(new TravelPackage(selectedCustomer, selectedAccomm, start, days));
+            // Create a new travel package.
+            TravelPackage newPackage = new TravelPackage(selectedCustomer, selectedAccomm, start, days);
+            packages.add(newPackage);
 
-        // Clean up
-        selectedAccomm.setIsAvailable(false);
-        startDateField.setText("");
-        durationField.setText("");
-        this.listTravelPackages();
+            // Add the travel package to the selectTravel Package combo
+            selectTravelPackageCombo.addItem(Integer.toString(newPackage.getID()));
 
-        // Remove the selected accommodation from the combo box
-        selectAccommodationCombo.removeItemAt(selectAccommodationCombo.getSelectedIndex());
+            selectedAccomm.setIsAvailable(false);
+
+            // Remove the selected accommodation from the combo box
+            selectAccommodationCombo.removeItemAt(selectAccommodationCombo.getSelectedIndex());
+        }
+        catch(Exception e){
+            System.out.println("Exception occurred");
+        }
+        finally{
+            // Clean up
+            startDateField.setText("");
+            durationField.setText("");
+            this.listTravelPackages();
+        }
     }
 
     public Customer getCustomerByID(int id){
@@ -450,11 +522,43 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
             System.out.println(p);
         }
     }
+
+    public void addLessonFees(){
+    /*  Add lessons to package  */
+       
+        try{
+            // First get the Travel package from the ID specified
+            int selectedPackageID = Integer.parseInt((String) selectTravelPackageCombo.getSelectedItem());
+            TravelPackage selectedPackage = this.getTravelPackageByID(selectedPackageID);
+
+            // Get the number of lessons
+            int numLessons = Integer.parseInt(selectNumLessonsField.getText());
+
+            selectedPackage.addLesson(numLessons);
+        }
+        catch(Exception e){
+            System.out.println("Exception Occurred");
+        }
+        finally{
+            // Clean up
+            selectNumLessonsField.setText("");
+        }
+    }
+
+    public TravelPackage getTravelPackageByID(int id){
+    /*  Get Travel Package by ID        */
+        for (TravelPackage p: packages){
+            if (p.getID() == id){
+                return p;
+            }
+        }
+        return null;
+    }
  
     /*          MAIN            */
     public static void main(String[] args){
         MtBullerResortGUI app = new MtBullerResortGUI();
-        app.setSize(650,600);// (width,height)
+        app.setSize(850,600);// (width,height)
         app.setLocationRelativeTo(null);
         app.setVisible(true);
     }// End main
