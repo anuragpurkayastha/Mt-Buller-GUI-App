@@ -12,6 +12,11 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.EOFException;
 
 public class MtBullerResortGUI extends JFrame implements ActionListener{
 
@@ -83,6 +88,9 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     JPanel selectTravelPackagePanel;
     JPanel displayTravelPackagePanel;
     JPanel travelPackageBtnPanel;
+    
+    //-- Display area
+    JTextArea travelPackageDisplayArea;
 
     //-- Buttons
     JButton addTravelPackageBtn;
@@ -91,6 +99,7 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
     JButton listPackagesBtn;
     JButton savePackagesBtn;
     JButton readPackagesBtn;
+    JButton clearPackageDisplayBtn;
 
     //-- Input Fields
     JLabel customerSelectLabel;
@@ -268,16 +277,22 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
 
 
         for (int i = 0; i < accommodations.size(); i++){
-            selectAccommodationCombo.addItem(Integer.toString(accommodations.get(i).getID()));
+            if (accommodations.get(i).getIsAvailable()){
+                selectAccommodationCombo.addItem(Integer.toString(accommodations.get(i).getID()));
+            }
         }
 
         /*      Add Lift pass Lesson Panel    */
         addLiftPassLessonPanel = new JPanel();
+        addLiftPassLessonPanel.setLayout(new GridLayout(3,1,5,5));
         addLiftPassLessonPanel.setBorder(new TitledBorder("Add Lessons and Lift Pass"));
 
 
         addLiftPassPanel = new JPanel();
         addLiftPassPanel.setLayout(new GridLayout(1,3,5,5));
+
+        addLessonPanel = new JPanel();
+        addLessonPanel.setLayout(new GridLayout(1,3,5,5));
 
         addLessonBtn = new JButton("Add Lesson");
         addLessonBtn.addActionListener(this);
@@ -299,6 +314,36 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
 
         numLiftPassDaysLbl = new JLabel("Number of Days");
         numLiftPassDaysField = new JTextField(3);
+        
+        /*      Display Panel   */
+        displayTravelPackagePanel = new JPanel();
+        displayTravelPackagePanel.setBorder(new TitledBorder("List Travel Packages"));
+        displayTravelPackagePanel.setLayout(new BorderLayout());
+        travelPackageDisplayArea = new JTextArea(10,70);
+        JScrollPane travelPackageDisplayScroll = new JScrollPane(travelPackageDisplayArea,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        displayTravelPackagePanel.add(travelPackageDisplayScroll, BorderLayout.NORTH);
+
+        /*      Button Panel    */
+        travelPackageBtnPanel = new JPanel();
+        travelPackageBtnPanel.setLayout(new GridLayout(1,4,5,5));
+
+            // Buttons
+        listPackagesBtn = new JButton("List Packages");
+        listPackagesBtn.addActionListener(this);
+        savePackagesBtn = new JButton("Save Packages");
+        savePackagesBtn.addActionListener(this);
+        readPackagesBtn = new JButton("Read Packages");
+        readPackagesBtn.addActionListener(this);
+        clearPackageDisplayBtn = new JButton("Clear Display");
+        clearPackageDisplayBtn.addActionListener(this);
+
+        travelPackageBtnPanel.add(listPackagesBtn);
+        travelPackageBtnPanel.add(savePackagesBtn);
+        travelPackageBtnPanel.add(readPackagesBtn);
+        travelPackageBtnPanel.add(clearPackageDisplayBtn);
+
+        displayTravelPackagePanel.add(travelPackageBtnPanel, BorderLayout.SOUTH);
 
         addTravelPackagePanel.setBorder(new TitledBorder("New Travel Package"));
         addTravelPackagePanel.add(customerSelectLabel);
@@ -315,17 +360,19 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         selectTravelPackagePanel.add(selectTravelPackageCombo);
         addLiftPassLessonPanel.add(selectTravelPackagePanel);
 
-        addLiftPassPanel.add(selectNumLessonsLabel);
-        addLiftPassPanel.add(selectNumLessonsField);
-        addLiftPassPanel.add(addLessonBtn);
+        addLessonPanel.add(selectNumLessonsLabel);
+        addLessonPanel.add(selectNumLessonsField);
+        addLessonPanel.add(addLessonBtn);
+        addLiftPassLessonPanel.add(addLessonPanel);
+
+        addLiftPassPanel.add(numLiftPassDaysLbl);
+        addLiftPassPanel.add(numLiftPassDaysField);
+        addLiftPassPanel.add(addLiftPassBtn);
         addLiftPassLessonPanel.add(addLiftPassPanel);
 
-        addLiftPassLessonPanel.add(numLiftPassDaysLbl);
-        addLiftPassLessonPanel.add(numLiftPassDaysField);
-        addLiftPassLessonPanel.add(addLiftPassBtn);
-
         travelPackageTab.add(addTravelPackagePanel, BorderLayout.NORTH);
-        travelPackageTab.add(addLiftPassLessonPanel);
+        travelPackageTab.add(addLiftPassLessonPanel, BorderLayout.CENTER);
+        travelPackageTab.add(displayTravelPackagePanel, BorderLayout.SOUTH);
         /*=============================================== END TRAVEL PACKAGES ====================================================================== */
         // Add tabs to the window
         tabs.add("Accommodation", accommodationTab);
@@ -367,6 +414,18 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         }
         else if (e.getSource() == addLiftPassBtn){
             System.out.println("Adding lift pass....");
+        }
+        else if (e.getSource() == listPackagesBtn){
+            this.listTravelPackages();
+        }
+        else if (e.getSource() == savePackagesBtn){
+            this.savePackages();
+        }
+        else if (e.getSource() == clearPackageDisplayBtn){
+            travelPackageDisplayArea.setText(""); 
+        }
+        else if (e.getSource() == readPackagesBtn){
+            this.readPackages();
         }
     }
 
@@ -518,8 +577,9 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
 
     public void listTravelPackages(){
     /* List all Travel packages */
+        travelPackageDisplayArea.setText("");
         for (TravelPackage p: packages){
-            System.out.println(p);
+            travelPackageDisplayArea.append(p.toString() + "\n\n");
         }
     }
 
@@ -554,7 +614,73 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
         }
         return null;
     }
- 
+
+    public void savePackages() {
+    /*
+        Save packages to file
+    */
+        FileOutputStream fos;
+        ObjectOutputStream oos;
+
+        try{
+            fos = new FileOutputStream("packages.dat");
+            oos = new ObjectOutputStream(fos);
+
+            for (TravelPackage tp: packages) {
+                oos.writeObject(tp);
+            }
+
+            fos.close();
+            oos.close();
+        }
+        catch (Exception exc) {
+            System.out.println("Error occurred when writing to file! Error:");
+            exc.printStackTrace();
+        }
+    }
+
+    public void readPackages(){
+    /*
+        Read packages from file
+    */
+        FileInputStream fis;
+        ObjectInputStream ois;
+
+        packages.clear();
+
+        try {
+            fis = new FileInputStream("packages.dat");
+            ois = new ObjectInputStream(fis);
+
+            while(true){
+                try {
+                    Object object = ois.readObject();
+                    TravelPackage p = (TravelPackage)object;
+
+                    //  Retrieve the accommodation from the object.
+                    Accommodation accommFromFile = p.getAccommodation();
+
+                    //  Obtain the accommodation object from the list of accommodations and set the availability to false.
+                    Accommodation a = this.getAccommodationByID(accommFromFile.getID());
+                    a.setIsAvailable(false);
+
+                    //  Add the package to the list
+                    packages.add(p);
+                }
+                catch (EOFException eof) {
+                    fis.close();
+                    ois.close();
+                    ois.close();
+                    break;
+                }
+            }
+
+            this.listTravelPackages();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /*          MAIN            */
     public static void main(String[] args){
         MtBullerResortGUI app = new MtBullerResortGUI();
