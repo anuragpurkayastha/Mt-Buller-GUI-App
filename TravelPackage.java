@@ -122,6 +122,6 @@ public class TravelPackage implements Serializable{
 
 	@Override
 	public String toString(){
-		return "\nPackage ID:\t\t" + packageID + "Customer:\t\t" + customer.getName()  + "(ID: " + customer.getID() + ")" + "\nLessons:\t\t$" + lesson + "\nLift Pass:\t\t$" + liftPass + "\nAccommodation ID:\t" + accommodation.getID() + "\nStart Date:\t\t" + startDate + "\nDuration:\t\t" + duration + " days";
+		return "\nPackage ID:\t\t" + packageID + "\nCustomer:\t\t" + customer.getName()  + "(ID: " + customer.getID() + ")" + "\nLessons:\t\t$" + lesson + "\nLift Pass:\t\t$" + liftPass + "\nAccommodation ID:\t" + accommodation.getID() + "\nStart Date:\t\t" + startDate + "\nDuration:\t\t" + duration + " days";
 	}
 }
