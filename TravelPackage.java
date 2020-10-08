@@ -47,6 +47,10 @@ public class TravelPackage implements Serializable{
 	public int getID(){
 		return packageID;
 	}
+	
+	public void setNextID(int id){
+		nextID++;
+	}
 
 	public Accommodation getAccommodation(){
 		return accommodation;
@@ -88,8 +92,8 @@ public class TravelPackage implements Serializable{
 		return liftPass;
 	}
 
-	public void addLiftPass(int liftPass){
-		this.liftPass += liftPass;
+	public void addLiftPass(int numDays){
+		liftPass += numDays * 26;
 	}
 
 	public Customer getCustomer(){
@@ -118,6 +122,6 @@ public class TravelPackage implements Serializable{
 
 	@Override
 	public String toString(){
-		return "Customer:\t\t" + customer.getName()  + "(ID: " + customer.getID() + ")" + "\nPackage ID:\t\t" + packageID + "\nLessons:\t\t$" + lesson + "\nLift Pass:\t\t$" + liftPass + "\nAccommodation ID:\t" + accommodation.getID() + "\nStart Date:\t\t" + startDate + "\nDuration:\t\t" + duration + " days";
+		return "\nPackage ID:\t\t" + packageID + "Customer:\t\t" + customer.getName()  + "(ID: " + customer.getID() + ")" + "\nLessons:\t\t$" + lesson + "\nLift Pass:\t\t$" + liftPass + "\nAccommodation ID:\t" + accommodation.getID() + "\nStart Date:\t\t" + startDate + "\nDuration:\t\t" + duration + " days";
 	}
 }
