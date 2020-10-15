@@ -411,7 +411,6 @@ public class MtBullerResortGUI extends JFrame implements ActionListener{
             }
         }
         else if (e.getSource() == addLiftPassBtn){
-            System.out.println("Adding lift pass....");
 			if(!numLiftPassDaysField.equals("")){
                 this.addLiftPass();
             }
