@@ -19,5 +19,5 @@ javac *.java
 Run the program by executing the following command:
 
 ```
-java Main.java
+java MtBullerResortGUI.java
 ```
